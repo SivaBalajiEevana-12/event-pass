@@ -27,7 +27,7 @@ const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:3300/events')
+    fetch('https://event-pass-backend.onrender.com/events')
       .then((res) => {
         if (!res.ok) {
           throw new Error('Failed to fetch events');

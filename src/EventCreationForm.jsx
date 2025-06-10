@@ -158,7 +158,7 @@ const EventCreationForm = () => {
         eventData.capacity = Number.parseInt(formData.capacity)
       }
 
-      const response = await fetch("http://localhost:3300/api/event", {
+      const response = await fetch("https://event-pass-backend.onrender.com/api/event", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
