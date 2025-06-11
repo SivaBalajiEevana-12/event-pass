@@ -176,7 +176,7 @@ const [events, setEvents] = useState([]);
                     <Button size="sm" variant="outline" colorScheme="blue">
                       Learn More
                     </Button>
-                  <Link to={`/register/${event._id}`} > <Button size="sm" colorScheme="blue"  isDisabled={event.status === "sold-out"}>
+                  <Link to={`/register/${event._id}`} > <Button size="sm" colorScheme="blue"  isDisabled={event.status === "sold-out" || event.status === "sold-out" || new Date(`${event.date}T${event.time}`) < new Date()}>
                       {event.status === "sold-out" ? "Sold Out" : "Register"}
                     </Button>
                     </Link> 
