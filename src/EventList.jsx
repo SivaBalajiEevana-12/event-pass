@@ -72,6 +72,10 @@ const [events, setEvents] = useState([]);
     
       }
   }
+const isEventPast = (eventDate) => {
+  return new Date(eventDate) < new Date();
+};
+
   const navigation = useNavigate();
   // const handleRegister = (e) => {
   //   navigation(`/register/${e}`);
@@ -126,18 +130,23 @@ const [events, setEvents] = useState([]);
                   <HStack>
                     <CalendarIcon color="blue.500" />
                     <Text fontSize="sm" fontWeight="medium">
-                      {new Date(event.date).toLocaleDateString("en-US", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
+                     {new Date(event.date).toLocaleDateString("en-US", {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+})}
+
                     </Text>
                   </HStack>
                   <HStack>
                     <TimeIcon color="green.500" />
                     <Text fontSize="sm" fontWeight="medium">
-                      {event.time}
+                     {new Date(event.date).toLocaleTimeString("en-US", {
+  hour: "2-digit",
+  minute: "2-digit",
+})}
+
                     </Text>
                   </HStack>
                 </HStack>
@@ -176,9 +185,18 @@ const [events, setEvents] = useState([]);
                     <Button size="sm" variant="outline" colorScheme="blue">
                       Learn More
                     </Button>
-                  <Link to={`/register/${event._id}`} > <Button size="sm" colorScheme="blue"  isDisabled={event.status === "sold-out" || event.status === "sold-out" || new Date(`${event.date}T${event.time}`) < new Date()}>
-                      {event.status === "sold-out" ? "Sold Out" : "Register"}
-                    </Button>
+                  <Link to={`/register/${event._id}`} > <Button
+  size="sm"
+  colorScheme="blue"
+  isDisabled={event.status === "sold-out" || isEventPast(event.date)}
+>
+  {event.status === "sold-out"
+    ? "Sold Out"
+    : isEventPast(event.date)
+    ? "Event Ended"
+    : "Register"}
+</Button>
+
                     </Link> 
                   </HStack>
                 </Flex>
