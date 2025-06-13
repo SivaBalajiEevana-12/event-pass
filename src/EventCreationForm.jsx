@@ -40,6 +40,8 @@ const EventCreationForm = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null)
   const toast = useToast()
+console.log("Date sent from frontend:", formData.date);
+// Example: 2025-06-13T07:03
 
   // Validation functions
   const validateTitle = (title) => {
@@ -158,7 +160,7 @@ const EventCreationForm = () => {
         eventData.capacity = Number.parseInt(formData.capacity)
       }
 
-      const response = await fetch("https://event-pass-backend.onrender.com/api/event", {
+      const response = await fetch("https://event-pass-backend-production.up.railway.app/api/event", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -177,7 +179,7 @@ const EventCreationForm = () => {
           isClosable: true,
         })
 
-        // Reset form
+        // Reset formFdat
         setFormData({
           title: "",
           description: "",

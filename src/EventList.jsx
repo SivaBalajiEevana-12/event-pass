@@ -11,38 +11,36 @@ import {
   Flex,
   Spacer,
   Button,
-  Avatar,
-  AvatarGroup,
   Divider,
   Container,
 } from "@chakra-ui/react"
 import { InfoIcon, ChatIcon, CalendarIcon, TimeIcon, StarIcon } from "@chakra-ui/icons"
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { DateTime } from "luxon"
 
 const EventList = () => {
-  // Sample event data
-const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [events, setEvents] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetch('https://event-pass-backend.onrender.com/events')
+    fetch("https://event-pass-backend-production.up.railway.app/events")
       .then((res) => {
         if (!res.ok) {
-          throw new Error('Failed to fetch events');
+          throw new Error("Failed to fetch events")
         }
-        return res.json();
+        return res.json()
       })
       .then((data) => {
-        setEvents(data);
-        setLoading(false);
+        setEvents(data)
+        setLoading(false)
       })
       .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  }, []);
+        setError(err.message)
+        setLoading(false)
+      })
+  }, [])
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -69,17 +67,14 @@ const [events, setEvents] = useState([]);
         return "teal"
       default:
         return "gray"
-    
-      }
+    }
   }
-const isEventPast = (eventDate) => {
-  return new Date(eventDate) < new Date();
-};
 
-  const navigation = useNavigate();
-  // const handleRegister = (e) => {
-  //   navigation(`/register/${e}`);
-  // }
+  const isEventPast = (eventDate) => {
+    const now = DateTime.now().setZone("Asia/Kolkata")
+    const eventTime = DateTime.fromISO(eventDate, { zone: "utc" }).setZone("Asia/Kolkata")
+    return eventTime < now
+  }
 
   return (
     <Container maxW="container.xl" py={8}>
@@ -93,123 +88,96 @@ const isEventPast = (eventDate) => {
           </Text>
         </Box>
 
-        {events.map((event) => (
-          <Card key={event._id} variant="outline" shadow="md">
-            <CardHeader>
-              <Flex>
-                <Box>
-                  <Heading size="md" mb={2}>
-                    {event.title}
-                  </Heading>
-                  <HStack spacing={4} mb={2}>
-                    <Badge colorScheme={getCategoryColor(event.category)} variant="subtle">
-                      {event.category}
-                    </Badge>
-                    <Badge colorScheme={getStatusColor(event.status)} variant="solid">
-                      {event.status?.replace("-", " ").toUpperCase()}
-                    </Badge>
-                  </HStack>
-                </Box>
-                <Spacer />
-                <Box textAlign="right">
-                  <StarIcon color="yellow.400" />
-                  <Text fontSize="sm" color="gray.500" mt={1}>
-                    Featured
-                  </Text>
-                </Box>
-              </Flex>
-            </CardHeader>
+        {events.map((event) => {
+          const eventDate = DateTime.fromISO(event.date, { zone: "utc" }).setZone("Asia/Kolkata")
 
-            <CardBody pt={0}>
-              <Text color="gray.600" mb={4}>
-                {event.description}
-              </Text>
-
-              <VStack spacing={3} align="stretch">
-                <HStack spacing={4}>
-                  <HStack>
-                    <CalendarIcon color="blue.500" />
-                    <Text fontSize="sm" fontWeight="medium">
-                     {new Date(event.date).toLocaleDateString("en-US", {
-  weekday: "long",
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-})}
-
+          return (
+            <Card key={event._id} variant="outline" shadow="md">
+              <CardHeader>
+                <Flex>
+                  <Box>
+                    <Heading size="md" mb={2}>
+                      {event.title}
+                    </Heading>
+                    <HStack spacing={4} mb={2}>
+                      <Badge colorScheme={getCategoryColor(event.category)} variant="subtle">
+                        {event.category}
+                      </Badge>
+                      <Badge colorScheme={getStatusColor(event.status)} variant="solid">
+                        {event.status?.replace("-", " ").toUpperCase()}
+                      </Badge>
+                    </HStack>
+                  </Box>
+                  <Spacer />
+                  <Box textAlign="right">
+                    <StarIcon color="yellow.400" />
+                    <Text fontSize="sm" color="gray.500" mt={1}>
+                      Featured
                     </Text>
-                  </HStack>
-                  <HStack>
-                    <TimeIcon color="green.500" />
-                    <Text fontSize="sm" fontWeight="medium">
-                     {new Date(event.date).toLocaleTimeString("en-US", {
-  hour: "2-digit",
-  minute: "2-digit",
-})}
-
-                    </Text>
-                  </HStack>
-                </HStack>
-
-                <HStack spacing={4}>
-                  <HStack>
-                    <InfoIcon color="purple.500" />
-                    <Text fontSize="sm" fontWeight="medium">
-                      {event.location}
-                    </Text>
-                  </HStack>
-                  <HStack>
-                    <ChatIcon color="orange.500" />
-                    {/* <Text fontSize="sm" fontWeight="medium">
-                      {event.attendees} attendees
-                    </Text> */}
-                  </HStack>
-                </HStack>
-
-                <Divider />
-
-                <Flex align="center" justify="space-between">
-                  {/* <HStack>
-                    <AvatarGroup size="sm" max={3}>
-                      <Avatar name="John Doe" />
-                      <Avatar name="Jane Smith" />
-                      <Avatar name="Bob Johnson" />
-                      <Avatar name="Alice Brown" />
-                    </AvatarGroup>
-                    <Text fontSize="sm" color="gray.500">
-                      +{event.attendees - 4} others
-                    </Text>
-                  </HStack> */}
-
-                  <HStack spacing={2}>
-                    <Button size="sm" variant="outline" colorScheme="blue">
-                      Learn More
-                    </Button>
-                  <Link to={`/register/${event._id}`} > <Button
-  size="sm"
-  colorScheme="blue"
-  isDisabled={event.status === "sold-out" || isEventPast(event.date)}
->
-  {event.status === "sold-out"
-    ? "Sold Out"
-    : isEventPast(event.date)
-    ? "Event Ended"
-    : "Register"}
-</Button>
-
-                    </Link> 
-                  </HStack>
+                  </Box>
                 </Flex>
-              </VStack>
-            </CardBody>
-          </Card>
-        ))}
+              </CardHeader>
 
-        {/* <Box textAlign="center" mt={8}>
-          <Button colorScheme="blue" size="lg">
-            Load More Events
-          </Button>
-        </Box> */}
+              <CardBody pt={0}>
+                <Text color="gray.600" mb={4}>
+                  {event.description}
+                </Text>
+
+                <VStack spacing={3} align="stretch">
+                  <HStack spacing={4}>
+                    <HStack>
+                      <CalendarIcon color="blue.500" />
+                      <Text fontSize="sm" fontWeight="medium">
+                        {eventDate.toFormat("EEEE, d LLLL yyyy")}
+                      </Text>
+                    </HStack>
+                    <HStack>
+                      <TimeIcon color="green.500" />
+                      <Text fontSize="sm" fontWeight="medium">
+                        {eventDate.toFormat("hh:mm a")}
+                      </Text>
+                    </HStack>
+                  </HStack>
+
+                  <HStack spacing={4}>
+                    <HStack>
+                      <InfoIcon color="purple.500" />
+                      <Text fontSize="sm" fontWeight="medium">
+                        {event.location}
+                      </Text>
+                    </HStack>
+                    <HStack>
+                      <ChatIcon color="orange.500" />
+                    </HStack>
+                  </HStack>
+
+                  <Divider />
+
+                  <Flex align="center" justify="space-between">
+                    <HStack spacing={2}>
+                      <Button size="sm" variant="outline" colorScheme="blue">
+                        Learn More
+                      </Button>
+                      <Link to={`/register/${event._id}`}>
+                        <Button
+                          size="sm"
+                          colorScheme="blue"
+                          isDisabled={event.status === "sold-out" || isEventPast(event.date)}
+                        >
+                          {event.status === "sold-out"
+                            ? "Sold Out"
+                            : isEventPast(event.date)
+                            ? "Event Ended"
+                            : "Register"}
+                        </Button>
+                      </Link>
+                    </HStack>
+                  </Flex>
+                </VStack>
+              </CardBody>
+            </Card>
+          )
+        })}
       </VStack>
     </Container>
   )

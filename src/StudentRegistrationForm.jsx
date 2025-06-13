@@ -103,7 +103,7 @@ const StudentRegistrationForm = () => {
     try {
       // Replace this with your actual API call
       console.log("eventId",id);
-      const response = await fetch(`https://event-pass-backend.onrender.com/api/user?eventId=${id}`, {
+      const response = await fetch(`https://event-pass-backend-production.up.railway.app/api/user?eventId=${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
